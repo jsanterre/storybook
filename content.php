@@ -1,46 +1,22 @@
 <?php require_once("includes/connection.php"); ?>
 <?php require_once("includes/functions.php"); ?>
-<?php 
-	if(isset($_GET['book'])) {
-		$sel_book = $_GET['book'];
-		$sel_chapter = "";
-	}
-	elseif(isset($_GET['chapter'])) {
-		$sel_chapter = $_GET['chapter'];
-		$sel_book = "";
-	}
-	else {
-		$sel_book = "";
-		$sel_chapter = "";
-	}
-?>
+<?php find_selected_page(); ?>
 <?php include("includes/header.php"); ?>
 <table id="structure">
 	<tr>
 		<td id="navigation">
-			<ul class="books">
-				<?php
-					$book_set = get_all_books();
-					while($book = mysql_fetch_array($book_set)) {
-						echo "<li";
-						if($book['id'] == $sel_book) { echo " class = \"selected\""; }
-						echo "><a href=\"content.php?book=" . urlencode($book['id']) . "\">{$book['book_name']}</a></li>";
-						$chapter_set = get_chapters_for_book($book['id']);
-						echo "<ul class=\"chapters\">";
-						while($chapter = mysql_fetch_array($chapter_set)) {
-							echo "<li";
-							if($chapter['id'] == $sel_chapter) { echo " class = \"selected\""; }
-							echo "><a href=\"content.php?chapter=" . urlencode($chapter['id']) . "\">{$chapter['chapter_name']}</a></li>";
-						}
-						echo "</ul>";
-					}
-				?>
-			</ul>
+			<?php echo navigation($sel_book, $sel_chapter); ?>
+			<br />
+			<a href="new_book.php">+ Add a new Book</a>
 		</td>
 		<td id="chapter">
-			<h2>Content Area</h2>
-			<?php echo $sel_book;?> <br />
-			<?php echo $sel_chapter;?> <br />
+			<?php 
+				if(!is_null($sel_book)) { echo "<h2>{$sel_book['book_name']}</h2>";}
+				elseif(!is_null($sel_chapter)) {echo $sel_chapter['chapter_name'];?>
+				<div class="chapter-content">
+					<?php echo $sel_chapter['content'];} 
+				else{echo "Select a chapter";}
+			?> 
 		</td>
 	</tr>
 </table>
