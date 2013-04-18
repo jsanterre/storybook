@@ -23,10 +23,10 @@
 						?>
 					</select>
 				</p>
-				<p> Visible:
-					<input type="radio" name="visible" value="0" /> No
+				<p> Published:
+					<input type="radio" name="published" value="0" /> No
 					&nbsp;
-					<input type="radio" name="visible" value="1" /> Yes
+					<input type="radio" name="published" value="1" /> Yes
 				</p>
 				<input type="submit" value="Add Book" />
 			</form>
