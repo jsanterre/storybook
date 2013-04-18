@@ -12,10 +12,10 @@
 		<td id="chapter">
 			<?php 
 				if(!is_null($sel_book)) { echo "<h2>{$sel_book['book_name']}</h2>";}
-				if(!is_null($sel_chapter)) {echo "<h3>Chapitre ". $sel_chapter['position'] . "</h3><h3>" . $sel_chapter['chapter_name'] . "</h3>";?>
+				elseif(!is_null($sel_chapter)) {echo $sel_chapter['chapter_name'];?>
 				<div class="chapter-content">
 					<?php echo $sel_chapter['content'];} 
-				if(is_null($sel_book)&&is_null($sel_chapter)){echo "Select content";}
+				else{echo "Select a chapter";}
 			?> 
 		</td>
 	</tr>

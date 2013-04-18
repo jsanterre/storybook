@@ -3,20 +3,9 @@
 <?php 
 	$errors = array();
 	
-	$required_fields = array('book_name', 'position', 'published');
-	foreach($required_fields as $fieldname) {
-		if(!isset($_POST[$fieldname]) || empty($_POST[$fieldname])) {
-			$errors[] = $fieldname;
-		}
+	if(!isset($_POST['book_name']) || empty($_POST['book_name'])) {
+		$errors[] = 'book_name';
 	}
-
-	$fields_with_length = array('book_name' => 30);
-	foreach($fields_with_length as $fieldname => $maxlength) {
-		if (strlen(trim(mysql_prep($_POST[$fieldname]))) > $maxlength) {
-			$errors[] = $fieldname;
-		}
-	}
-	
 	if(!empty($errors)) {
 		redirect_to("new_book.php");
 	}
@@ -24,11 +13,11 @@
 <?php
 	$book_name = mysql_prep($_POST['book_name']);
 	$position = mysql_prep($_POST['position']);
-	$published = mysql_prep($_POST['published']);
+	$visible = mysql_prep($_POST['visible']);
 ?>
 <?php
-	$query = "INSERT INTO books (book_name, position, published)
-			VALUES ('{$book_name}', {$position}, {$published})";
+	$query = "INSERT INTO books (book_name, position, visible)
+			VALUES ('{$book_name}', {$position}, {$visible})";
 			
 	if(mysql_query($query, $db)) {
 		header("Location: content.php");
