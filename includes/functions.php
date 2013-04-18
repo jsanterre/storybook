@@ -85,7 +85,7 @@
 		if(isset($_GET['book'])) {
 			$sel_book = get_book_by_id($_GET['book']);
 		}
-		elseif(isset($_GET['chapter'])) {
+		if(isset($_GET['chapter'])) {
 			$sel_chapter = get_chapter_by_id($_GET['chapter']);
 		}
 	}
@@ -97,13 +97,13 @@
 			while($book = mysql_fetch_array($book_set)) {
 				$output .= "<li";
 				if($book['id'] == $sel_book['id']) { $output.= " class = \"selected\""; }
-				$output.= "><a href=\"content.php?book=" . urlencode($book['id']) . "\">{$book['book_name']}</a></li>";
+				$output.= "><a href=\"edit_book.php?book=" . urlencode($book['id']) . "\">{$book['book_name']}</a></li>";
 				$chapter_set = get_chapters_for_book($book['id']);
 				$output.= "<ul class=\"chapters\">";
 				while($chapter = mysql_fetch_array($chapter_set)) {
 					$output.= "<li";
 					if($chapter['id'] == $sel_chapter['id']) { $output.= " class = \"selected\""; }
-					$output.= "><a href=\"content.php?chapter=" . urlencode($chapter['id']) . "\">{$chapter['chapter_name']}</a></li>";
+					$output.= "><a href=\"content.php?book=" . urlencode($book['id']) . "&chapter=" . urlencode($chapter['id']) . "\">{$chapter['chapter_name']}</a></li>";
 				}
 				$output.= "</ul>";
 			}
