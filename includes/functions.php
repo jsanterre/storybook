@@ -90,6 +90,39 @@
 		}
 	}
 	
+	function book_navigation($sel_book) {
+		$output = "<ul class=\"books\">";
+				
+		$book_set = get_all_books();
+			while($book = mysql_fetch_array($book_set)) {
+				$output .= "<li";
+				if($book['id'] == $sel_book['id']) { $output.= " class = \"selected\""; }
+				$output.= "><a href=\"content.php?book=" . urlencode($book['id']) . "\">{$book['book_name']}</a></li>";
+			}
+			$output.= "</ul>";
+			return $output;
+	}
+	
+	function chapter_navigation($sel_book, $sel_chapter) {
+		$output = "";
+		if(isset($sel_book)) {
+			$chapter_set = get_chapters_for_book($sel_book['id']);
+			$output .= "<ul class=\"chapters\">";
+			$output.= "<li";
+				if(!isset($sel_chapter['id'])) { $output.= " class = \"selected\""; }
+				$output.= "><a href=\"content.php?book=" . urlencode($sel_book['id']) . "\">Description</a></li>";
+			while($chapter = mysql_fetch_array($chapter_set)) {
+				$output.= "<li";
+				if($chapter['id'] == $sel_chapter['id']) { $output.= " class = \"selected\""; }
+				$output.= "><a href=\"content.php?book=" . urlencode($sel_book['id']) . "&chapter=" . urlencode($chapter['id']) . "\">Chapitre {$chapter['position']}</a></li>";
+			}
+			$output.= "</ul>";
+		}
+		return $output;
+	}
+	
+	
+	
 	function navigation($sel_book, $sel_chapter) {
 		$output = "<ul class=\"books\">";
 				
@@ -97,7 +130,7 @@
 			while($book = mysql_fetch_array($book_set)) {
 				$output .= "<li";
 				if($book['id'] == $sel_book['id']) { $output.= " class = \"selected\""; }
-				$output.= "><a href=\"edit_book.php?book=" . urlencode($book['id']) . "\">{$book['book_name']}</a></li>";
+				$output.= "><a href=\"content.php?book=" . urlencode($book['id']) . "\">{$book['book_name']}</a></li>";
 				$chapter_set = get_chapters_for_book($book['id']);
 				$output.= "<ul class=\"chapters\">";
 				while($chapter = mysql_fetch_array($chapter_set)) {

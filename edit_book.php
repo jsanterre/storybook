@@ -1,5 +1,6 @@
 <?php require_once("includes/connection.php"); ?>
 <?php require_once("includes/functions.php"); ?>
+<?php require_once("includes/form_functions.php"); ?>
 <?php 
 	if(intval($_GET['book'])==0) {
 		redirect_to("content.php");
@@ -8,22 +9,14 @@
 		$errors = array();
 	
 		$required_fields = array('book_name', 'position', 'published');
-		foreach($required_fields as $fieldname) {
-			if(!isset($_POST[$fieldname]) || (empty($_POST[$fieldname]) && !is_numeric($_POST[$fieldname]))) {
-				$errors[] = $fieldname;
-			}
-		}
-
+		$errors = array_merge($errors, check_required_fields($required_fields));
+		
 		$fields_with_length = array('book_name' => 30);
-		foreach($fields_with_length as $fieldname => $maxlength) {
-			if (strlen(trim(mysql_prep($_POST[$fieldname]))) > $maxlength) {
-				$errors[] = $fieldname;
-			}
-		}
+		$errors = array_merge($errors, check_max_field_lengths($fields_with_length));
 		
 		if(empty($errors)) {
 			$id = mysql_prep($_GET['book']);
-			$book_name = mysql_prep($_POST['book_name']);
+			$book_name = trim(mysql_prep($_POST['book_name']));
 			$position = mysql_prep($_POST['position']);
 			$published = mysql_prep($_POST['published']);
 			
@@ -39,7 +32,7 @@
 			}
 			else {
 				// Failed
-				$message = "Le livre a pas marche";
+				$message = "Le livre n'a pas ete modifie";
 				$message .= "<br />" . mysql_error();
 			}
 		}
@@ -55,6 +48,8 @@
 	<tr>
 		<td id="navigation">
 			<?php echo navigation($sel_book, $sel_chapter); ?>
+			<br />
+			<a href="new_book.php">+ Add a new Book</a>
 		</td>
 		<td id="chapter">
 			<h2> Edit Book: <?php echo $sel_book['book_name'];?> </h2>
@@ -62,11 +57,7 @@
 				echo "<p class = \"message}\">" . $message . "</p>";
 			}?>
 			<?php if(!empty($errors)) {
-				echo "<p class=\"errors\">";
-				echo "Revoyer les plages suivantes:<br />";
-				foreach($errors as $error) {
-					echo " - " . $error . "<br />";
-				}
+				display_errors($errors);
 			} ?>
 			<form action="edit_book.php?book=<?php echo urlencode($sel_book['id']);?>" method="post">
 				<p> Book Name:
@@ -96,11 +87,24 @@
 				<input type="submit" name="submit" value="Edit Book" />
 				<!-- Remember to make the corresponding chapters disapear also...-->
 				&nbsp;&nbsp;
-				<a href= "delete_book.php?book=<?php echo urlencode($sel_book['id']);?>"  onclick="return confirm('En etes vous bien sure?');" >Detruire ce livre </a>
+				<a href= "delete_book.php?book=<?php echo urlencode($sel_book['id']);?>"  onclick="return confirm('En etes vous bien sure?');" >Detruire ce livre</a>
 			</form> 
 				
 			<br />
 			<a href="content.php">Cancel</a>
+			<div style="margin-top: 2em; border-top: 1px solid #000000;">
+				<h3>Chapters in this book:</h3>
+				<ul>
+				<?php 
+					$book_chapters = get_chapters_for_book($sel_book['id']);
+					while($chapter = mysql_fetch_array($book_chapters)) {
+						echo "<li> <a href=\"content.php?chapter={$chapter['id']}\">{$chapter['chapter_name']}</a></li>";
+					}
+				?>
+				</ul>
+				<br />
+				+ <a href="new_chapter.php?book=<? echo $sel_book['id']; ?>">Add a new chapter for this book</a>
+			</div>
 		</td>
 	</tr>
 </table>
